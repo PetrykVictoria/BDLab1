@@ -4,10 +4,8 @@ struct Student {
 
 	int Id;
 	int teacherId;
-	char firstName[20];
-	char lastName[20];
-	char dateBirth[11];
-	char gender[1];
+	char firstName;
+	char lastName;
+	char gender;
 	int Class;
 };
-

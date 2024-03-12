@@ -1,6 +1,4 @@
 #include <iostream>
-#include "Master.h"
-#include "Slave.h"
 #include "Teacher.h"
 #include "Student.h"
 
@@ -10,7 +8,7 @@ int main()
 {
     int choice;
     do {
-        cout << "Choose an option: \n1.Add teacher\n2.Get teacher\n3.Update teacher\n4.Delete teacher\n5.Get list of all teachers\n6.Calculate teachers\n7.Add student\n8.Get student\n9.Update student\n10.Delete student\n11.Get list of all students\n12.Calculate students\n13.Exit\n" << endl;
+        cout << "\nChoose an option: \n1.Add teacher\n2.Get teacher\n3.Update teacher\n4.Delete teacher\n5.Get list of all teachers\n6.Calculate teachers\n7.Add student\n8.Get student\n9.Update student\n10.Delete student\n11.Get list of all students\n12.Calculate students\n13.Exit\n" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
         cout << " " << endl;
@@ -29,18 +27,33 @@ int main()
             break;
         }
         case 2:
-            cout << "Enter teacher's id to search: ";
-            cin >> teacherId;
+            do {
+                cout << "Enter teacher's id to search: ";
+                cin >> teacherId;
+                if (teacherId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (teacherId == 0);
             FindTeacherById(teacherId);
             break;
         case 3:
-            cout << "Enter teacher's id to update: ";
-            cin >> teacherId;
+            do {
+                cout << "Enter teacher's id to update: ";
+                cin >> teacherId;
+                if (teacherId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (teacherId == 0);
             UpdateTeacher(teacherId);
             break;
         case 4:
-            cout << "Enter teacher's id to delete: ";
-            cin >> teacherId;
+            do {
+                cout << "Enter teacher's id to delete: ";
+                cin >> teacherId;
+                if (teacherId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (teacherId == 0);
             DeleteTeacher(teacherId);
             break;
         case 5:
@@ -66,18 +79,33 @@ int main()
             break;
         }
         case 8:
-            cout << "Enter student's id to search: ";
-            cin >> studentId;
+            do {
+                cout << "Enter student's id to search: ";
+                cin >> studentId;
+                if (studentId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (studentId == 0);
             FindStudentById(studentId);
             break;
         case 9:
-            cout << "Enter teacher's id to update: ";
-            cin >> studentId;
+            do {
+                cout << "Enter student's id to update: ";
+                cin >> studentId;
+                if (studentId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (studentId == 0);
             UpdateStudent(studentId);
             break;
         case 10:
-            cout << "Enter student's id to delete: ";
-            cin >> studentId;
+            do {
+                cout << "Enter student's id to delete: ";
+                cin >> studentId;
+                if (studentId == 0) {
+                    cout << "Invalid Id. Please enter a non-zero Id." << endl;
+                }
+            } while (studentId == 0);
             DeleteStudent(studentId);
             break;
         case 11:

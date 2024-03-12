@@ -1,32 +1,39 @@
-#pragma once
 #include <stdio.h>
-#include "Slave.h"
-#include "Master.h"
 #include <iostream>
+#include <fstream>
+#include "Slave.h"
 using namespace std;
 
-
 void GetInfoStudent(Student& student, int& teacherId) {
-    cout << "Enter teacher's id: ";
+    cout << "Enter teacher's Id: ";
     cin >> teacherId;
     cout << "Enter student's first name: ";
     cin >> student.firstName;
     cout << "Enter student's last name: ";
     cin >> student.lastName;
-    string date;
-    cout << "Enter date of Birth ('YYYY-MM-DD'): ";
-    cin >> date;
-    cout << "Enter gender (m or f): ";
-    cin >> student.gender;
-    cout << "Enter student's number of class: ";
-    cin >> student.Class;
+    do {
+        cout << "Enter gender (m or f): ";
+        cin >> student.gender;
+        if (student.gender != 'm' && student.gender != 'f') {
+            cout << "Invalid gender. Please enter 'm' for male or 'f' for female." << endl;
+        }
+    } while (student.gender != 'm' && student.gender != 'f');
+    do {
+        cout << "Enter student's number of class (1-11): ";
+        cin >> student.Class;
+        if (student.Class <= 0 || student.Class > 11) {
+
+            cout << "Invalid class number. Please enter a number between 1 and 11." << endl;
+        }
+    } while (student.Class <= 0 || student.Class > 11);
+
 }
 
 void InsertStudent(Student& student, int teacherId) {
     ifstream teacherFile("Master.txt");
     Teacher teacher;
     bool teacherExists = false;
-    while (teacherFile >> teacher.Id >> teacher.firstName >> teacher.lastName >> teacher.middleName >> teacher.dateBirth >> teacher.subject) {
+    while (teacherFile >> teacher.Id >> teacher.firstName >> teacher.lastName >> teacher.middleName >> teacher.subject) {
         if (teacher.Id == teacherId) {
             teacherExists = true;
             break;
@@ -45,7 +52,7 @@ void InsertStudent(Student& student, int teacherId) {
     vector<pair<Student, int>> students;
 
     if (fileIn.is_open()) {
-        while (fileIn >> lastStudent.Id >> lastStudent.firstName >> lastStudent.lastName >> lastStudent.dateBirth >> lastStudent.gender >> lastStudent.Class >> lastStudent.teacherId) {
+        while (fileIn >> lastStudent.Id >> lastStudent.firstName >> lastStudent.lastName >> lastStudent.gender >> lastStudent.Class >> lastStudent.teacherId) {
             if (fileIn.fail()) {
                 cerr << "Error reading file." << endl;
                 return;
@@ -66,7 +73,7 @@ void InsertStudent(Student& student, int teacherId) {
     bool replaced = false;
     for (auto& pair : students) {
         if (pair.first.Id == 0) {
-            student.Id = pair.second; 
+            student.Id = pair.second;
             pair.first = student;
             pair.second = teacherId;
             replaced = true;
@@ -89,7 +96,6 @@ void InsertStudent(Student& student, int teacherId) {
         fileOut << pair.first.Id << " "
             << pair.first.firstName << " "
             << pair.first.lastName << " "
-            << pair.first.dateBirth << " "
             << pair.first.gender << " "
             << pair.first.Class << " "
             << pair.second << '\n';
@@ -112,7 +118,7 @@ void FindStudentById(int studentId) {
     int teacherId;
     bool found = false;
 
-    while (file >> student.Id >> student.firstName >> student.lastName >> student.dateBirth >> student.gender >> student.Class >> teacherId) {
+    while (file >> student.Id >> student.firstName >> student.lastName >> student.gender >> student.Class >> teacherId) {
         if (student.Id == studentId) {
             found = true;
 
@@ -121,7 +127,6 @@ void FindStudentById(int studentId) {
             cout << "Teacher Id: " << teacherId << endl;
             cout << "First Name: " << student.firstName << endl;
             cout << "Last Name: " << student.lastName << endl;
-            cout << "Date of Birth: " << student.dateBirth << endl;
             cout << "Gender: " << student.gender << endl;
             cout << "Class: " << student.Class << endl;
 
@@ -129,9 +134,9 @@ void FindStudentById(int studentId) {
         }
     }
 
-    if (!found) {
-        cout << "Student with id " << studentId << " not found." << endl;
-    }
+        if (!found) {
+            cout << "Student with id " << studentId << " not found." << endl;
+        }
 
     file.close();
 }
@@ -148,14 +153,16 @@ void GetAllStudents() {
     bool found = false;
 
     cout << "List of all students:" << endl;
-    while (file >> student.Id >> student.firstName >> student.lastName >> student.dateBirth >> student.gender >> student.Class >> teacherId) {
+    while (file >> student.Id >> student.firstName >> student.lastName >> student.gender >> student.Class >> teacherId) {
+        if (student.Id == 0) {
+            continue;
+        }
         found = true;
 
         cout << "Id: " << student.Id << endl;
         cout << "Teacher Id: " << teacherId << endl;
         cout << "First Name: " << student.firstName << endl;
         cout << "Last Name: " << student.lastName << endl;
-        cout << "Date of Birth: " << student.dateBirth << endl;
         cout << "Gender: " << student.gender << endl;
         cout << "Class: " << student.Class << endl;
         cout << "-------------------------" << endl;
@@ -168,6 +175,7 @@ void GetAllStudents() {
     file.close();
 }
 
+
 int CountStudents() {
     std::ifstream file("Slave.txt");
     if (!file.is_open()) {
@@ -176,15 +184,19 @@ int CountStudents() {
     }
 
     int count = 0;
-    std::string line;
-    while (std::getline(file, line)) {
-        ++count;
+    Student student;
+    int teacherId;
+    while (file >> student.Id >> student.firstName >> student.lastName >> student.gender >> student.Class >> teacherId) {
+        if (student.Id != 0) {
+            ++count;
+        }
     }
 
     file.close();
 
     return count;
 }
+
 
 void UpdateStudent(int studentId) {
     ifstream file("Slave.txt");
@@ -198,7 +210,7 @@ void UpdateStudent(int studentId) {
     bool found = false;
     vector<pair<Student, int>> students;
 
-    while (file >> student.Id >> student.firstName >> student.lastName >> student.dateBirth >> student.gender >> student.Class >> teacherId) {
+    while (file >> student.Id >> student.firstName >> student.lastName >> student.gender >> student.Class >> teacherId) {
         if (student.Id == studentId) {
             found = true;
             cout << "Student found. Please enter new information:" << endl;
@@ -225,7 +237,6 @@ void UpdateStudent(int studentId) {
         fileOut << pair.first.Id << " "
             << pair.first.firstName << " "
             << pair.first.lastName << " "
-            << pair.first.dateBirth << " "
             << pair.first.gender << " "
             << pair.first.Class << " "
             << pair.second << '\n';
@@ -248,7 +259,7 @@ void DeleteStudent(int studentId) {
 
     bool found = false;
 
-    while (fileIn >> student.Id >> student.firstName >> student.lastName >> student.dateBirth >> student.gender >> student.Class >> teacherId) {
+    while (fileIn >> student.Id >> student.firstName >> student.lastName >> student.gender >> student.Class >> teacherId) {
         if (student.Id == studentId) {
             found = true;
             cout << "Student found. Deleting..." << endl;
@@ -271,15 +282,14 @@ void DeleteStudent(int studentId) {
         return;
     }
 
-    for (auto& pair : students) {
-        fileOut << pair.first.Id << " "
-            << pair.first.firstName << " "
-            << pair.first.lastName << " "
-            << pair.first.dateBirth << " "
-            << pair.first.gender << " "
-            << pair.first.Class << " "
-            << pair.second << '\n';
-    }
+        for (auto& pair : students) {
+            fileOut << pair.first.Id << " "
+                << pair.first.firstName << " "
+                << pair.first.lastName << " "
+                << pair.first.gender << " "
+                << pair.first.Class << " "
+                << pair.second << '\n';
+        }
 
     fileOut.close();
 
